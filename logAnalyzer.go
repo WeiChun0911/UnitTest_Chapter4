@@ -1,19 +1,22 @@
 package chap4
 
 type LogAnalyzer struct {
-	service IWebService
+	webService IWebService
+	emailService IEmailService
 }
 
 func (la *LogAnalyzer) Analyze(filename string){
 	if(len(filename) < 8){
-		la.service.LogError("File name too short: " + filename)
+		err := la.webService.LogError("File name too short: " + filename)
+		if err != nil {
+			la.emailService.SendEmail("support@going.cloud","Fake exception!", "Can't Log")
+		}
 	}
 }
 
-func NewLogAnalyzer(service IWebService) *LogAnalyzer {
+func NewLogAnalyzer(fs IWebService, fe IEmailService) *LogAnalyzer {
     return &LogAnalyzer{
-        service: service,
+        webService: fs,
+		emailService: fe,
     }
 }
-
-
